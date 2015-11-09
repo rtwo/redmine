@@ -157,4 +157,17 @@ class TimeEntry < ActiveRecord::Base
   def editable_custom_fields(user=nil)
     editable_custom_field_values(user).map(&:custom_field).uniq
   end
+
+  def is_billable
+    r = true;
+    logger.debug "fCMS: billable "
+    custom_field_values.each do |cf|
+        if cf.custom_field.name == "Abrechnung"
+            r = cf.value === "berechnen"
+            break
+        end
+    end
+
+    r
+  end
 end

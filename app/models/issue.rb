@@ -916,6 +916,16 @@ class Issue < ActiveRecord::Base
     @spent_hours ||= time_entries.sum(:hours) || 0
   end
 
+  def spent_hours_not_invoiced
+    sum = time_entries.find_all { |t| !t.is_billable } .sum(&:hours)
+    @spent_hours_not_invoiced ||= sum || 0
+  end
+
+  def spent_hours_invoiced
+    sum = time_entries.find_all { |t| t.is_billable } .sum(&:hours)
+    @spent_hours_invoiced ||= sum || 0
+  end
+
   # Returns the total number of hours spent on this issue and its descendants
   def total_spent_hours
     @total_spent_hours ||= if leaf?
@@ -1454,6 +1464,11 @@ class Issue < ActiveRecord::Base
     former_parent_id = parent_id_was
     # delete invalid relations of all descendants
     self_and_descendants.each do |issue|
+          #@projects = Project.visible.find(
+          #  :joins => "LEFT JOIN #{Project.table_name} child ON #{Project.table_name}.lft <= child.lft AND #{Project.table_name}.rgt >= child.rgt",
+          #  :conditions => ["child.id IN (?)", ids],
+          #  :order => "#{Project.table_name}.lft ASC"
+          #).uniq
       issue.relations.each do |relation|
         relation.destroy unless relation.valid?
       end
