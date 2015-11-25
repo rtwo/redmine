@@ -768,7 +768,6 @@ class Project < ActiveRecord::Base
 
   # Yields the given block for each project with its level in the tree
   def self.project_tree(projects, &block)
-      Rails.logger.debug "------------------> fCMS "+ __FILE__.to_s + ":" + __LINE__.to_s
     ancestors = []
     projects.sort_by(&:lft).each do |project|
       while (ancestors.any? && !project.is_descendant_of?(ancestors.last))
