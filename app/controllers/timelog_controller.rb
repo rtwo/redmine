@@ -265,9 +265,10 @@ private
 
   # Returns the TimeEntry scope for index and report actions
   def time_entry_scope(options={})
-    scope = @query.results_scope(options)
     if @issue
-      scope = scope.on_issue(@issue)
+        scope = @query.results_scope_without_visibility.on_issue(@issue)
+    else
+        scope = @query.results_scope(options)
     end
     scope
   end

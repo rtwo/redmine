@@ -113,6 +113,17 @@ class TimeEntryQuery < Query
       references(:activity)
   end
 
+  def results_scope_without_visibility
+    order_option = [group_by_sort_order, options[:order]].flatten.reject(&:blank?)
+
+    TimeEntry.
+      where(statement).
+      order(order_option).
+      joins(joins_for_order_statement(order_option.join(','))).
+      includes(:activity).
+      references(:activity)
+  end
+
   def sql_for_activity_id_field(field, operator, value)
     condition_on_id = sql_for_field(field, operator, value, Enumeration.table_name, 'id')
     condition_on_parent_id = sql_for_field(field, operator, value, Enumeration.table_name, 'parent_id')
