@@ -120,6 +120,7 @@ class TimeEntryQuery < Query
       where(statement).
       order(order_option).
       joins(joins_for_order_statement(order_option.join(','))).
+      joins(:project).
       includes(:activity).
       references(:activity)
   end
